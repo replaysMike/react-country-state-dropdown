@@ -1,0 +1,51 @@
+{
+  "name": "react-country-state-dropdown",
+  "version": "1.0.0",
+  "description": "A country, state, city, and language dropdown for React",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "babel src -d dist",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "react",
+    "react-country-state-dropdown",
+    "react-country-dropdown",
+    "react-country",
+    "country-dropdown",
+    "state-dropdown",
+    "city-dropdown",
+    "country",
+    "state",
+    "city",
+    "dropdown",
+    "select",
+    "component",
+    "npm"
+  ],
+  "author": "Michael Brown",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/replaysMike/react-country-state-dropdown/issues"
+  },
+  "homepage": "https://github.com/replaysMike/react-country-state-dropdown",
+  "peerDependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "devDependencies": {
+    "@babel/cli": "^7.23.9",
+    "@babel/plugin-syntax-jsx": "^7.23.3",
+    "@babel/preset-env": "^7.23.9",
+    "@babel/preset-react": "^7.23.3"
+  },
+  "dependencies": {
+    "libphonenumber-js": "^1.10.55",
+    "underscore": "^1.13.6"
+  }
+}

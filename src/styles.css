@@ -1,0 +1,210 @@
+.rcsd.rcsd-dropdown {
+  width: 400px;
+  position: relative;
+}
+
+.rcsd.rcsd-dropdown .rcsd-input, .rcsd.rcsd-dropdown .rcsd-input input {
+  width: 100%;
+}
+
+.rcsd.rcsd-dropdown .rcsd-input:has(input:hover) {
+  border: 1px solid #aaa;
+}
+
+.rcsd.rcsd-dropdown .rcsd-input:has(input:focus) {
+  border: 1px solid #96c8da;
+}
+
+.rcsd.rcsd-dropdown .rcsd-input {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.rcsd.rcsd-dropdown:has(.menu) .rcsd-input {
+  border-bottom: none !important;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;  
+}
+
+.rcsd.rcsd-dropdown .rcsd-input .wrapped-input .flag {
+  margin-left: 8px;
+}
+
+.rcsd.rcsd-dropdown .rcsd-input .wrapped-input:has(.flag) input {
+  width: calc(100% - 90px);
+  padding: 8px 8px 8px 0px;
+}
+
+.rcsd.rcsd-dropdown .rcsd-input input {
+  border: 0;
+  outline: 0;
+  padding: 8px 8px;
+  width: calc(100% - 40px);
+  background: 0 0 !important;
+}
+
+.rcsd.rcsd-dropdown .rcsd-input i.icon {
+  cursor: pointer;
+  position: absolute;
+  line-height: 1em;
+  right: 4px;
+  top: 20%;
+  font-size: 1em;
+}
+
+.rcsd.rcsd-dropdown .rcsd-input i.icon::before {
+  content: '\023F7';
+  background: 0 0!important;
+}
+
+.rcsd.rcsd-dropdown .rcsd-input i.clear {
+  cursor: pointer;
+  position: absolute;
+  line-height: 1em;
+  right: 30px;
+  top: 25%;
+}
+
+.rcsd.rcsd-dropdown .rcsd-input i.clear::before {
+  content: '\1F7AB';
+  background: 0 0 !important;
+}
+
+.rcsd.rcsd-dropdown .menu {
+  position: absolute;
+  width: 100%;
+  z-index: 1;
+  background-color: #fff;
+  transform: translateY(-4px);
+  border: 1px solid #96c8da;
+  border-top: 1px solid #eeeded;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  padding: 5px 0;
+  font-size: 1em;
+  margin-top: 4px;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.rcsd.rcsd-dropdown .menu .items {
+  margin: 0px 2px;
+}
+
+.rcsd.rcsd-dropdown .menu .items .prioritized {
+  border-bottom: 2px solid #f0f0f0;
+  box-shadow: 0px 3px 3px -2px rgba(0, 0, 0, 0.5);
+  background-color: rgb(0,0,0,0.01);
+  margin-bottom: 4px;
+}
+
+.rcsd.rcsd-dropdown .menu .items.striped .item {
+  border-bottom: 1px solid #fafafa;
+}
+
+.rcsd.rcsd-dropdown .menu .items.striped .item .description {
+  font-size: 0.9em;
+  margin-left: 5px;
+}
+
+.rcsd.rcsd-dropdown .menu .items .item {
+  cursor: pointer;
+  padding: 4px 10px;
+  pointer-events: all;
+}
+
+.rcsd.rcsd-dropdown .menu .items .item.selected {
+  background-color: rgba(0,0,0,.05);
+}
+
+.rcsd.rcsd-dropdown .menu .items .item:hover {
+  background-color: #fafafa;
+}
+
+.rcsd.rcsd-dropdown .menu::-webkit-scrollbar {
+  width: 10px;
+}
+
+.rcsd.rcsd-dropdown .menu::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-bottom-right-radius: 8px;
+}
+
+.rcsd.rcsd-dropdown .menu::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 8px;
+}
+
+.rcsd.rcsd-dropdown .menu::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.phone-input {
+  display: flex;
+  width: 400px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.phone-input .rcsd.rcsd-dropdown {
+  width: 70px;
+  display: inline-block;
+  font-size: 0.7em;
+}
+
+.phone-input .rcsd.rcsd-dropdown .rcsd-input {
+  border: none;
+  padding-left: 20px;
+}
+
+.phone-input .rcsd.rcsd-dropdown .rcsd-input:has(input:hover) {
+  border: none;
+}
+
+.phone-input .rcsd.rcsd-dropdown .rcsd-input input {
+  font-size: 0.9em;
+  line-height: 1.5em;
+}
+
+.phone-input .rcsd.rcsd-dropdown .rcsd-input:has(input:focus) {
+  border: none;
+}
+
+.phone-input input {
+  padding: 8px 8px 8px 0px;
+  width: calc(100% - 80px);
+  background: 0 0 !important;
+  border: none;
+  outline: none;
+}
+
+.phone-input:has(input:hover) {
+  border: 1px solid #aaa;
+}
+
+.phone-input:has(input:focus) {
+  border: 1px solid #96c8da;
+}
+
+.phone-input .rcsd.rcsd-dropdown .rcsd-input i.clear {
+  cursor: pointer;
+  position: absolute;
+  line-height: 1em;
+  right: 18px;
+  top: 35%;
+}
+
+.phone-input .rcsd.rcsd-dropdown .rcsd-input i.icon {
+  right: 4px;
+  top: 30%;
+}
+
+.phone-input .rcsd.rcsd-dropdown .rcsd-input i.flag {
+  position: absolute;
+  top: 30%;
+  left: 10%;
+}
+
+.phone-input .rcsd.rcsd-dropdown .menu .items .item {
+  padding: 4px 5px;
+}
