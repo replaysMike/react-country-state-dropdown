@@ -42,6 +42,20 @@ const CityDropdown = ({
   allowFreeFormText,
   /** true to disable the control */
   disabled,
+  /** add classes to the rcsd-dropdown */
+  className = '',
+  /** add classes to the rcsd-input */
+  inputContainerClassName = '',
+  /** add classes to the input element */
+  inputClassName = '',
+  /** add classes to the menu */
+  menuClassName = '',
+  /** add classes to the items container */
+  itemsClassName = '',
+  /** add classes to the item */
+  itemClassName = '',
+  /** add classes to the prioritized items container */
+  prioritizedClassName = '',
   ...rest
 }) => {
 
@@ -164,16 +178,22 @@ const CityDropdown = ({
       emptyLabel={emptyLabel}
       allowFreeFormText={allowFreeFormText}
       searchable={searchable}
+      disabled={disabled}
+      inputContainerClassName={inputContainerClassName}
+      inputClassName={inputClassName}
+      menuClassName={menuClassName}
+      itemsClassName={itemsClassName}
+      itemClassName={itemClassName}
       {...rest}
       onRenderEmpty={() => selectedCountry ? (selectedState ? emptyLabel : noStateLabel) : noCountryLabel }
       onRenderMenu={(itemRenderer, selected, isFiltered, striped, handleItemSelect) => {
-        return <div className='menu'>
-          <div className={`items${striped ? ' striped' : ''}`}>
-            {!isFiltered && prioritizedCities && prioritizedCities.length > 0 && <div className='prioritized'>
+        return <div className={`menu ${menuClassName}`}>
+          <div className={`items${striped ? ' striped' : ''} ${itemsClassName}`}>
+            {!isFiltered && prioritizedCities && prioritizedCities.length > 0 && <div className={`prioritized ${prioritizedClassName}`}>
               {prioritizedCities.map((option, key) => (
                 <div
                   key={key}
-                  className={`item${option === selected ? ' selected' : ''}`}
+                  className={`item${option === selected ? ' selected' : ''} ${itemClassName}`}
                   data-id={option.id}
                   data-countryid={selectedCountry.id}
                   data-country={selectedCountry.iso2}
@@ -192,7 +212,7 @@ const CityDropdown = ({
       onRenderItem={(key, option, selected, isFiltered, handleItemSelect) => {
         const output = (<div
           key={key}
-          className={`item${option === selected ? ' selected' : ''}`}
+          className={`item${option === selected ? ' selected' : ''} ${itemClassName}`}
           role="option"
           aria-checked={selected ? 'true' : 'false'}
           aria-selected={selected ? 'true' : 'false'}

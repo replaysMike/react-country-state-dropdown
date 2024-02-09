@@ -36,6 +36,18 @@ const Dropdown = ({
   allowFreeFormText,
   /** true to disable the control */
   disabled,
+  /** add classes to the rcsd-dropdown */
+  className = '',
+  /** add classes to the rcsd-input */
+  inputContainerClassName = '',
+  /** add classes to the input element */
+  inputClassName = '',
+  /** add classes to the menu */
+  menuClassName = '',
+  /** add classes to the items container */
+  itemsClassName = '',
+  /** add classes to the item */
+  itemClassName = '',
   ...rest
 }) => {
   
@@ -49,6 +61,8 @@ const Dropdown = ({
   const inputRef = useRef(null);
 
   const globalClickHandler = useCallback((e) => {
+    if (disabled) return;
+
     if (isFiltered) {
       if (!allowFreeFormText) {
         // reset filtering
@@ -65,7 +79,7 @@ const Dropdown = ({
     if (inputRef.current && !inputRef.current.contains(e.target)) {
       setMenuIsOpen(false);
     }
-  }, [isFiltered, allowFreeFormText, internalValue]);
+  }, [isFiltered, allowFreeFormText, internalValue, disabled]);
 
   useEffect(() => {
     window.addEventListener("click", globalClickHandler);
@@ -88,6 +102,8 @@ const Dropdown = ({
   }, [value, internalOptions]);
 
   const handleInputClick = () => {
+    if (disabled) return;
+
     setMenuIsOpen(!menuIsOpen);
   };
 
@@ -103,6 +119,7 @@ const Dropdown = ({
       else {
         setInternalOptionsFiltered(internalOptions);
         setIsFiltered(false);
+
         if (onChange) onChange(e, '');
       }
     }
@@ -118,23 +135,25 @@ const Dropdown = ({
   };
 
   const handleClear = (e) => {
+    if (disabled) return;
     setInternalSelectedItem(null);
     setInternalValue('');
     setInternalOptionsFiltered(internalOptions);
     setIsFiltered(false);
+
     if (onChange) onChange(e, null);
   };
 
   const renderMenuInternal = () => {
     if (onRenderMenu) return onRenderMenu(renderItemInternal, internalSelectedItem, isFiltered, striped, handleItemSelect);
-    return (<div className='menu'><div className={`items${striped ? ' striped' : ''}`}>{renderItemInternal()}</div></div>);
+    return (<div className={`menu ${menuClassName}`}><div className={`items${striped ? ' striped' : ''} ${itemsClassName}`}>{renderItemInternal()}</div></div>);
   };
 
   const renderItemInternal = () => {
     if (internalOptionsFiltered && internalOptionsFiltered.length > 0) {
       return internalOptionsFiltered.map((option, key) => (onRenderItem && onRenderItem(key, option, internalSelectedItem, isFiltered, handleItemSelect)
         || (<div
-          className={`item${option === internalSelectedItem ? ' selected' : ''}`}
+          className={`item${option === internalSelectedItem ? ' selected' : ''} ${itemClassName}`}
           role="option"
           aria-checked={internalSelectedItem}
           aria-selected={internalSelectedItem}
@@ -148,7 +167,7 @@ const Dropdown = ({
   const renderInputInternal = () => {
     if (onRenderInput) return onRenderInput(internalSelectedItem, searchRef, internalValue, placeHolder, handleTextInputChange);
     return <input
-      className={`dropdown`}
+      className={`dropdown ${inputClassName}`}
       aria-autocomplete="list"
       autoComplete="new-password"
       onChange={handleTextInputChange}
@@ -160,8 +179,8 @@ const Dropdown = ({
   };
 
   return (
-    <div className='rcsd rcsd-dropdown'>
-      <div className='rcsd-input' ref={inputRef} onClick={handleInputClick} {...rest}>
+    <div className={`rcsd rcsd-dropdown${disabled ? ' disabled' : ''} ${className}`} {...rest}>
+      <div className={`rcsd-input ${inputContainerClassName}`} ref={inputRef} onClick={handleInputClick}>
         {renderInputInternal()}
         {clearable && internalSelectedItem && <i aria-hidden="true" className="clear" onClick={handleClear} />}
         <i aria-hidden="true" className="icon" />

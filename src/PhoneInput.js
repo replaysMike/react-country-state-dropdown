@@ -3,7 +3,6 @@ import Dropdown from "./Dropdown";
 import { data_countries } from "./data/countries";
 import { parsePhoneNumber, formatPhoneNumber, formatInternational, getCountry } from "./Utils";
 import _ from 'underscore';
-import "./flags.css";
 
 /**
  * Phone input component
@@ -29,6 +28,22 @@ const PhoneInput = ({
   clearable,
   /** true to disable the control */
   disabled,
+  /** add classes to the phone-input */
+  className = '',
+  /** add classes to the rcsd-input */
+  inputContainerClassName = '',
+  /** add classes to the input element */
+  inputClassName = '',
+  /** add classes to the dropdown input element */
+  dropdownInputClassName = '',
+  /** add classes to the menu */
+  menuClassName = '',
+  /** add classes to the items container */
+  itemsClassName = '',
+  /** add classes to the item */
+  itemClassName = '',
+  /** add classes to the prioritized items container */
+  prioritizedClassName = '',
   ...rest
 }) => {
   const [countries, setCountries] = useState([]);
@@ -93,7 +108,7 @@ const PhoneInput = ({
   };
 
   return (
-    <div className='phone-input'>
+    <div className={`phone-input ${className}`}>
       <Dropdown
         placeHolder=''
         options={countries}
@@ -110,10 +125,16 @@ const PhoneInput = ({
         clearable={false}
         allowFreeFormText={false}
         searchable={false}
+        disabled={disabled}
+        inputContainerClassName={inputContainerClassName}
+        inputClassName={inputClassName}
+        menuClassName={menuClassName}
+        itemsClassName={itemsClassName}
+        itemClassName={itemClassName}
         {...rest}
         onRenderInput={(option, ref, value, placeHolder, onChangeHandler) => {
           return (<>{showFlags && option && <i className={`${option.iso2.toLowerCase()} flag`} />}<input
-            className={`dropdown`}
+            className={`dropdown ${dropdownInputClassName}`}
             aria-autocomplete="list"
             autoComplete="new-password"
             onChange={onChangeHandler}
@@ -123,13 +144,13 @@ const PhoneInput = ({
           /></>)
         }}
         onRenderMenu={(itemRenderer, selected, isFiltered, striped, handleItemSelect) => {
-          return <div className='menu'>
-            <div className={`items${striped ? ' striped' : ''}`}>
+          return <div className={`menu ${menuClassName}`}>
+            <div className={`items${striped ? ' striped' : ''} ${itemsClassName}`}>
               {!isFiltered && prioritizedCountries && prioritizedCountries.length > 0 && <div className='prioritized'>
                 {prioritizedCountries.map((option, key) => (
                   <div
                     key={key}
-                    className={`item${option === selected ? ' selected' : ''}`}
+                    className={`item${option === selected ? ' selected' : ''} ${itemClassName}`}
                     data-id={option.id}
                     data-iso2={option.iso2}
                     data-iso3={option.iso3}
@@ -145,7 +166,7 @@ const PhoneInput = ({
         onRenderItem={(key, option, selected, isFiltered, handleItemSelect) => {
           const output = (<div
             key={key}
-            className={`item${option === selected ? ' selected' : ''}`}
+            className={`item${option === selected ? ' selected' : ''} ${itemClassName}`}
             role="option"
             aria-checked={selected ? 'true' : 'false'}
             aria-selected={selected ? 'true' : 'false'}
@@ -159,7 +180,7 @@ const PhoneInput = ({
         }}
       />
       <input
-        className={`input`}
+        className={`input ${inputClassName}`}
         aria-autocomplete="phone"
         autoComplete="phone"
         onChange={handleTextInputChange}

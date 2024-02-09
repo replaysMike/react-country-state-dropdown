@@ -1,10 +1,12 @@
 {
   "name": "react-country-state-dropdown",
-  "version": "1.0.1",
+  "version": "1.0.6",
   "description": "A country, state, city, and language dropdown for React",
   "main": "dist/index.js",
+  "module": "dist/esm/index.js",
   "scripts": {
-    "build": "babel src -d dist",
+    "build": "rollup -c",
+    "start": "rollup -c -w",
     "prepublishOnly": "npm run build"
   },
   "repository": {
@@ -49,10 +51,18 @@
     "@babel/cli": "^7.23.9",
     "@babel/plugin-syntax-jsx": "^7.23.3",
     "@babel/preset-env": "^7.23.9",
-    "@babel/preset-react": "^7.23.3"
+    "@babel/preset-react": "^7.23.3",
+    "@rollup/plugin-babel": "^6.0.4",
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-url": "^8.0.2",
+    "rollup": "^2.79.1",
+    "rollup-plugin-postcss": "^4.0.2"
   },
   "dependencies": {
     "libphonenumber-js": "^1.10.55",
+    "react-scripts": "^5.0.1",
     "underscore": "^1.13.6"
   }
 }

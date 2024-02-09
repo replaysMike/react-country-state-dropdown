@@ -3,7 +3,6 @@ import Dropdown from "./Dropdown";
 import { data_countries } from "./data/countries";
 import { getCountry } from "./Utils";
 import _ from 'underscore';
-import "./flags.css";
 
 /**
  * Country dropdown component
@@ -39,6 +38,20 @@ const CountryDropdown = ({
   allowFreeFormText,
   /** true to disable the control */
   disabled,
+  /** add classes to the rcsd-dropdown */
+  className,
+  /** add classes to the rcsd-input */
+  inputContainerClassName = '',
+  /** add classes to the input element */
+  inputClassName = '',
+  /** add classes to the menu */
+  menuClassName = '',
+  /** add classes to the items container */
+  itemsClassName = '',
+  /** add classes to the item */
+  itemClassName = '',
+  /** add classes to the prioritized items container */
+  prioritizedClassName = '',
   ...rest
 }) => {
 
@@ -101,10 +114,17 @@ const CountryDropdown = ({
       emptyLabel={emptyLabel}
       allowFreeFormText={allowFreeFormText}
       searchable={searchable}
+      className={className}
+      disabled={disabled}
+      inputContainerClassName={inputContainerClassName}
+      inputClassName={inputClassName}
+      menuClassName={menuClassName}
+      itemsClassName={itemsClassName}
+      itemClassName={itemClassName}
       {...rest}
       onRenderInput={(option, ref, value, placeHolder, onChangeHandler) => {
         return (<div className='wrapped-input'>{showFlags && option && <i className={`${option.iso2.toLowerCase()} flag`} />}<input
-          className={`dropdown`}
+          className={`dropdown ${inputClassName}`}
           aria-autocomplete="list"
           autoComplete="new-password"
           onChange={onChangeHandler}
@@ -115,13 +135,13 @@ const CountryDropdown = ({
         /></div>)
       }}
       onRenderMenu={(itemRenderer, selected, isFiltered, striped, handleItemSelect) => {
-        return <div className='menu'>
-          <div className={`items${striped ? ' striped' : ''}`}>
-            {!isFiltered && prioritizedCountries && prioritizedCountries.length > 0 && <div className='prioritized'>
+        return <div className={`menu ${menuClassName}`}>
+          <div className={`items${striped ? ' striped' : ''} ${itemsClassName}`}>
+            {!isFiltered && prioritizedCountries && prioritizedCountries.length > 0 && <div className={`prioritized ${prioritizedClassName}`}>
               {prioritizedCountries.map((option, key) => (
                 <div
                   key={key}
-                  className={`item${option === selected ? ' selected' : ''}`}
+                  className={`item${option === selected ? ' selected' : ''} ${itemClassName}`}
                   data-id={option.id}
                   data-iso2={option.iso2}
                   data-iso3={option.iso3}
@@ -140,7 +160,7 @@ const CountryDropdown = ({
       onRenderItem={(key, option, selected, isFiltered, handleItemSelect) => {
         const output = (<div
           key={key}
-          className={`item${option === selected ? ' selected' : ''}`}
+          className={`item${option === selected ? ' selected' : ''} ${itemClassName}`}
           role="option"
           aria-checked={selected ? 'true' : 'false'}
           aria-selected={selected ? 'true' : 'false'}
