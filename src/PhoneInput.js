@@ -49,7 +49,6 @@ const PhoneInput = ({
     };
     // load countries data
     let orderedCountries = data_countries.map(c => ({ ...c, value: c.iso2 }));
-    console.log('orderedCountries', orderedCountries);
     if (priority && priority.length > 0) {
       if (removePrioritized)
         orderedCountries = _.filter(orderedCountries, i => !priority.includes(i.iso2));
@@ -92,8 +91,6 @@ const PhoneInput = ({
   const handleFocus = (e) => {
 
   };
-
-  console.log('countries', countries);
 
   return (
     <div className='phone-input'>
