@@ -72,6 +72,8 @@ These attributes are common to all dropdowns. Rendering of the component is cont
 | onRenderInput | No | `-` | `function` | Override the rendering of the input control. |
 | onRenderEmpty | No | `-` | `function` | Override the rendering of the menu containers empty contents message. |
 
+---
+
 ```<CountryDropdown />```
 
 | Parameter | Required? | Default | Type | Description |
@@ -83,6 +85,8 @@ These attributes are common to all dropdowns. Rendering of the component is cont
 | native | No | `true` | `boolean` | True to show the country's native name instead of English name. | 
 | includeAlternate | No | `false` | `boolean` | True to include alternate name (native name if native=false, English name if native=true). | 
 
+---
+
 ```<StateDropdown />```
 
 | Parameter | Required? | Default | Type | Description |
@@ -93,6 +97,8 @@ These attributes are common to all dropdowns. Rendering of the component is cont
 | noCountryLabel | No | `"Please select a country"` | `string` | Label to display when no country is selected. |
 | priority | No | `[]` | `array` | An array of ISO2 state codes (ex. 'US') to show at the top of the list. |
 | removePrioritized | No | `false` | `boolean` | True to remove prioritized countries from the main list when searching. | 
+
+---
 
 ```<CityDropdown />```
 
@@ -107,6 +113,8 @@ These attributes are common to all dropdowns. Rendering of the component is cont
 | priority | No | `[]` | `array` | An array of ISO2 state codes (ex. 'US') to show at the top of the list. |
 | removePrioritized | No | `false` | `boolean` | True to remove prioritized countries from the main list when searching. | 
 
+---
+
 ```<LanguageDropdown />```
 
 | Parameter | Required? | Default | Type | Description |
@@ -115,6 +123,8 @@ These attributes are common to all dropdowns. Rendering of the component is cont
 | emptyLabel | No | `"No items."` | `string` | Label to display when no items are available. |
 | priority | No | `['en']` | `array` | An array of ISO2 language codes (ex. 'en') to show at the top of the list. |
 | removePrioritized | No | `false` | `boolean` | True to remove prioritized countries from the main list when searching. | 
+
+---
 
 ```<PhoneInput />```
 
@@ -243,19 +253,35 @@ Produces the output:
 
 There are many functions that can be called to retrieve data, or format phone numbers.
 
-```getCountries()```: Get an array of all countries.
-```getStates()```: Get an array of all state/provinces.
-```getCities()```: Get an array of all cities (very large list, see `getCitiesForState()`).
-```getLanguages()```: Get an array of all languages.
-```getCountry(country)```: Get a country by name, ISO code, numerical id or object
-```getState(state, country)```: Get a state by name, ISO code, numerical id or object, country must be specified.
-```getStatesForCountry(country)```: Get an array of all state/provinces for a specified country.
-```getCity(city, state, country)```: Get a city by name, numerical id, or object, state and country must also be specified.
-```getCitiesForState(state, country)```: List all cities by state and country
-```getLanguage(language)```: Get a language by name, native name or ISO code
-```parsePartialNumber(phoneNumber, countryCode)```: Parse a partial phone number
-```parsePhoneNumber(phoneNumber, countryCode)```: Parse a phone number
-```formatPhoneNumber(phoneNumber, countryCode)```: Format a phone number
-```formatInternational(phoneNumber, countryCode)```: Format a phone number as the international E.164 format
-```isValidPhoneNumber(phoneNumber, countryCode)```: Check if a phone number is of valid format
-```getCountriesForPhoneNumber(phoneNumber)```: Get the countries for a E.164 format phone number
+`getCountries()`: Get an array of all countries.
+
+`getStates()`: Get an array of all state/provinces.
+
+`getCities()`: Get an array of all cities (very large list, see `getCitiesForState()`).
+
+`getLanguages()`: Get an array of all languages.
+
+`getCountry(country)`: Get a country by name, ISO code, numerical id or object
+
+`getState(state, country)`: Get a state by name, ISO code, numerical id or object, country must be specified.
+
+`getStatesForCountry(country)`: Get an array of all state/provinces for a specified country.
+
+`getCity(city, state, country)`: Get a city by name, numerical id, or object, state and country must also be specified.
+
+`getCitiesForState(state, country)`: List all cities by state and country
+
+`getLanguage(language)`: Get a language by name, native name or ISO code
+
+`parsePartialNumber(phoneNumber, countryCode)`: Parse a partial phone number
+
+`parsePhoneNumber(phoneNumber, countryCode)`: Parse a phone number
+
+`formatPhoneNumber(phoneNumber, countryCode)`: Format a phone number
+
+`formatInternational(phoneNumber, countryCode)`: Format a phone number as the international E.164 format
+
+`isValidPhoneNumber(phoneNumber, countryCode)`: Check if a phone number is of valid format
+
+`getCountriesForPhoneNumber(phoneNumber)`: Get the countries for a E.164 format phone number
+
