@@ -2,22 +2,29 @@
   "name": "react-country-state-dropdown",
   "version": "1.0.0",
   "description": "A country, state, city, and language dropdown for React",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "scripts": {
     "build": "babel src -d dist",
     "prepublishOnly": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/replaysMike/react-country-state-dropdown.git"
   },
   "keywords": [
     "react",
     "react-country-state-dropdown",
     "react-country-dropdown",
     "react-country",
+    "react-phone-input",
     "country-dropdown",
     "state-dropdown",
     "city-dropdown",
     "country",
     "state",
     "city",
+    "phone",
+    "phoneinput",
     "dropdown",
     "select",
     "component",
