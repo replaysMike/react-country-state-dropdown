@@ -79,6 +79,12 @@ These attributes are common to all dropdowns. Rendering of the component is cont
 | onRenderItem | No | `-` | `function` | Override the rendering of the options item. |
 | onRenderInput | No | `-` | `function` | Override the rendering of the input control. |
 | onRenderEmpty | No | `-` | `function` | Override the rendering of the menu containers empty contents message. |
+| className | No | `""` | `string` | Add classes to the rcsd-dropdown |
+| inputContainerClassName | No | `""` | `string` | Add classes to the rcsd-input |
+| inputClassName | No | `""` | `string` | Add classes to the input element |
+| menuClassName | No | `""` | `string` | Add classes to the menu |
+| itemsClassName | No | `""` | `string` | Add classes to the items container|
+| itemClassName | No | `""` | `string` | Add classes to the item |
 
 ---
 
@@ -92,6 +98,7 @@ These attributes are common to all dropdowns. Rendering of the component is cont
 | showFlags | No | `true` | `boolean` | True to show the country's flag. | 
 | native | No | `true` | `boolean` | True to show the country's native name instead of English name. | 
 | includeAlternate | No | `false` | `boolean` | True to include alternate name (native name if native=false, English name if native=true). | 
+| prioritizedClassName | No | `""` | `string` | Add classes to the prioritized items container |
 
 ---
 
@@ -105,6 +112,7 @@ These attributes are common to all dropdowns. Rendering of the component is cont
 | noCountryLabel | No | `"Please select a country"` | `string` | Label to display when no country is selected. |
 | priority | No | `[]` | `array` | An array of ISO2 state codes (ex. 'US') to show at the top of the list. |
 | removePrioritized | No | `false` | `boolean` | True to remove prioritized countries from the main list when searching. | 
+| prioritizedClassName | No | `""` | `string` | Add classes to the prioritized items container |
 
 ---
 
@@ -120,6 +128,7 @@ These attributes are common to all dropdowns. Rendering of the component is cont
 | noStateLabel | No | `"Please select a state/province"` | `string` | Label to display when no state is selected. |
 | priority | No | `[]` | `array` | An array of ISO2 state codes (ex. 'US') to show at the top of the list. |
 | removePrioritized | No | `false` | `boolean` | True to remove prioritized countries from the main list when searching. | 
+| prioritizedClassName | No | `""` | `string` | Add classes to the prioritized items container |
 
 ---
 
@@ -131,6 +140,7 @@ These attributes are common to all dropdowns. Rendering of the component is cont
 | emptyLabel | No | `"No items."` | `string` | Label to display when no items are available. |
 | priority | No | `['en']` | `array` | An array of ISO2 language codes (ex. 'en') to show at the top of the list. |
 | removePrioritized | No | `false` | `boolean` | True to remove prioritized countries from the main list when searching. | 
+| prioritizedClassName | No | `""` | `string` | Add classes to the prioritized items container |
 
 ---
 
@@ -148,6 +158,8 @@ These attributes are common to all dropdowns. Rendering of the component is cont
 | disabled | No | `false` | `boolean` | Disables the control. |
 | onChange | No | `-` | `function` | Callback that gets called when the user selects a value. |
 | onSearchInputChange | No | `-` | `function` | Callback that gets called when the text input is changed. |
+| prioritizedClassName | No | `""` | `string` | Add classes to the prioritized items container |
+| dropdownInputClassName | No | `""` | `string` | Add classes to the dropdown input element |
 
 ## Examples
 
