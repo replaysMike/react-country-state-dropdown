@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Dropdown from "./Dropdown";
 import { data_cities } from "./data/cities";
-import { data_states } from "./data/states";
 import { data_countries } from "./data/countries";
-import { getCity } from './Utils';
+import { getCity, getCountry, getState } from './Utils';
 import _ from 'underscore';
 
 /**
@@ -56,12 +55,13 @@ const CityDropdown = ({
   itemClassName = '',
   /** add classes to the prioritized items container */
   prioritizedClassName = '',
+  tabIndex,
   ...rest
 }) => {
 
   const translateValue = (val, state, country) => {
     const valueObject = getCity(val, state, country);
-    return valueObject?.name;
+    return valueObject?.name ?? (allowFreeFormText ? val : null);
   };
 
   const [selectedCountry, setSelectedCountry] = useState(country);
@@ -109,22 +109,8 @@ const CityDropdown = ({
   }, [selectedCountry, selectedState]);
 
   useEffect(() => {
-    let selectedCountry = null;
-    if (country) {
-      if (typeof country === 'number') {
-        // find by id
-        selectedCountry = _.find(data_countries, i => i.id === country);
-      } else if (typeof country === 'string') {
-        // find my iso/name
-        selectedCountry = _.find(data_countries, i => i.iso2 === country)
-          || _.find(data_countries, i => i.iso3 === country)
-          || _.find(data_countries, i => i.name === country);
-      } else if (typeof country === 'object' && country !== null) {
-        // find by object
-        selectedCountry = _.find(data_countries, i => i.id === country.id);
-      }
-      if (!selectedCountry) console.error(`Could not find a country matching the value`, country);
-    }
+    const selectedCountry = getCountry(country);
+    if (!selectedCountry) console.error(`Could not find a country matching the value`, country);
 
     setSelectedCountry(selectedCountry);
   }, [country]);
@@ -133,23 +119,11 @@ const CityDropdown = ({
     let selectedState = null;
     if (selectedCountry && state) {
       // first find by the country
-      const statesForCountryData = _.find(data_states, i => i.id === selectedCountry.id);
-      if (statesForCountryData === undefined){
-        console.error(`There is no country selected, can not find state.`, selectedCountry);
+      selectedState = getState(state, selectedCountry);
+      if (selectedState === undefined){
+        console.error(`There were no states found for specified country.`, selectedCountry);
         return;
       }
-      if (typeof state === 'number') {
-        // find by id
-        selectedState = _.find(statesForCountryData.states, i => i.id === state);
-      } else if (typeof state === 'string') {
-        // find my name/code
-        selectedState = _.find(statesForCountryData.states, i => i.code === state)
-          || _.find(statesForCountryData.states, i => i.name === state);
-      } else if (typeof state === 'object' && state !== null) {
-        // find by object
-        selectedState = _.find(statesForCountryData.states, i => i.id === state.id);
-      }
-      if (!selectedState) console.error(`Could not find a state matching the value`, state);
     }
 
     setSelectedState(selectedState);
@@ -184,6 +158,7 @@ const CityDropdown = ({
       menuClassName={menuClassName}
       itemsClassName={itemsClassName}
       itemClassName={itemClassName}
+      tabIndex={tabIndex}
       {...rest}
       onRenderEmpty={() => selectedCountry ? (selectedState ? emptyLabel : noStateLabel) : noCountryLabel }
       onRenderMenu={(itemRenderer, selected, isFiltered, striped, handleItemSelect) => {

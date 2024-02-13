@@ -44,6 +44,8 @@ const PhoneInput = ({
   itemClassName = '',
   /** add classes to the prioritized items container */
   prioritizedClassName = '',
+  tabIndex,
+  title,
   ...rest
 }) => {
   const [countries, setCountries] = useState([]);
@@ -131,6 +133,8 @@ const PhoneInput = ({
         menuClassName={menuClassName}
         itemsClassName={itemsClassName}
         itemClassName={itemClassName}
+        tabIndex={tabIndex}
+        title={title}
         {...rest}
         onRenderInput={(option, ref, value, placeHolder, onChangeHandler) => {
           return (<>{showFlags && option && <i className={`${option.iso2.toLowerCase()} flag`} />}<input
@@ -139,8 +143,11 @@ const PhoneInput = ({
             autoComplete="new-password"
             onChange={onChangeHandler}
             value={option && option.phone_code && `+${option.phone_code}` || ''}
-            placeholder={placeHolder}
             ref={ref}
+            {...(placeHolder ? { placeholder: placeHolder } : {})}
+            {...(disabled ? { disabled } : {})}
+            {...(tabIndex && tabIndex > 0 ? { tabIndex } : {})}
+            {...(title && title?.length > 0 ? { title } : {})}
           /></>)
         }}
         onRenderMenu={(itemRenderer, selected, isFiltered, striped, handleItemSelect) => {
@@ -185,11 +192,12 @@ const PhoneInput = ({
         autoComplete="phone"
         onChange={handleTextInputChange}
         value={internalValue || ''}
-        placeholder={placeHolder}
         ref={inputRef}
         onBlur={handleBlur}
         onFocus={handleFocus}
-        disabled={disabled}
+        {...(placeHolder ? { placeholder: placeHolder } : {})}
+        {...(disabled ? { disabled } : {})}
+        {...(tabIndex && tabIndex > 0 ? { tabIndex } : {})}
       />
     </div>
   );

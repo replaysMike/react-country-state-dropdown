@@ -50,12 +50,14 @@ const StateDropdown = ({
   itemClassName = '',
   /** add classes to the prioritized items container */
   prioritizedClassName = '',
+  tabIndex,
+  title,
   ...rest
 }) => {
 
   const translateValue = (val, country) => {
     const valueObject = getState(val, country);
-    return valueObject?.name;
+    return valueObject?.name ?? (allowFreeFormText ? val : null);
   };
 
   const [selectedCountry, setSelectedCountry] = useState(null);
@@ -133,6 +135,8 @@ const StateDropdown = ({
       menuClassName={menuClassName}
       itemsClassName={itemsClassName}
       itemClassName={itemClassName}
+      tabIndex={tabIndex}
+      title={title}
       {...rest}
       onRenderEmpty={() => selectedCountry ? emptyLabel : noCountryLabel}
       onRenderMenu={(itemRenderer, selected, isFiltered, striped, handleItemSelect) => {

@@ -46,12 +46,14 @@ const LanguageDropdown = ({
   itemClassName = '',
   /** add classes to the prioritized items container */
   prioritizedClassName = '',
+  tabIndex,
+  title,
   ...rest
 }) => {
 
   const translateValue = (val) => {
     const valueObject = getLanguage(val);
-    return valueObject?.name;
+    return valueObject?.name ?? (allowFreeFormText ? val : null);
   };
 
   const [languages, setLanguages] = useState([]);
@@ -114,6 +116,8 @@ const LanguageDropdown = ({
       menuClassName={menuClassName}
       itemsClassName={itemsClassName}
       itemClassName={itemClassName}
+      tabIndex={tabIndex}
+      title={title}
       {...rest}
       onRenderMenu={(itemRenderer, selected, isFiltered, striped, handleItemSelect) => {
         return <div className={`menu ${menuClassName}`}>

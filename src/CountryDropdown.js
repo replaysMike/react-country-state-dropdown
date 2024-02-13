@@ -52,12 +52,13 @@ const CountryDropdown = ({
   itemClassName = '',
   /** add classes to the prioritized items container */
   prioritizedClassName = '',
+  tabIndex,
   ...rest
 }) => {
 
   const translateValue = (val) => {
     const valueObject = getCountry(val);
-    return valueObject?.name;
+    return valueObject?.name ?? (allowFreeFormText ? val : null);
   };
 
   const [countries, setCountries] = useState([]);
@@ -121,6 +122,8 @@ const CountryDropdown = ({
       menuClassName={menuClassName}
       itemsClassName={itemsClassName}
       itemClassName={itemClassName}
+      tabIndex={tabIndex}
+      title={title}
       {...rest}
       onRenderInput={(option, ref, value, placeHolder, onChangeHandler) => {
         return (<div className='wrapped-input'>{showFlags && option && <i className={`${option.iso2.toLowerCase()} flag`} />}<input
@@ -129,9 +132,11 @@ const CountryDropdown = ({
           autoComplete="new-password"
           onChange={onChangeHandler}
           value={value || ''}
-          placeholder={placeHolder}
           ref={ref}
-          disabled={disabled}
+          {...(placeHolder ? { placeholder: placeHolder } : {})}
+          {...(disabled ? { disabled } : {})}
+          {...(tabIndex && tabIndex > 0 ? { tabIndex } : {})}
+          {...(title && title?.length > 0 ? { title } : {})}
         /></div>)
       }}
       onRenderMenu={(itemRenderer, selected, isFiltered, striped, handleItemSelect) => {

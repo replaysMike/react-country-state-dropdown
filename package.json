@@ -1,6 +1,6 @@
 {
   "name": "react-country-state-dropdown",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "A country, state, city, and language dropdown for React",
   "main": "dist/index.js",
   "module": "dist/esm/index.js",

@@ -48,6 +48,8 @@ const Dropdown = ({
   itemsClassName = '',
   /** add classes to the item */
   itemClassName = '',
+  tabIndex,
+  title,
   ...rest
 }) => {
   
@@ -123,6 +125,9 @@ const Dropdown = ({
         if (onChange) onChange(e, '');
       }
     }
+    if (allowFreeFormText) {
+      if (onChange) onChange(e, e.target.value);
+    }
   };
 
   const handleItemSelect = (e, option) => {
@@ -172,9 +177,11 @@ const Dropdown = ({
       autoComplete="new-password"
       onChange={handleTextInputChange}
       value={internalValue || ''}
-      placeholder={placeHolder}
       ref={searchRef}
-      disabled={disabled}
+      {...(placeHolder ? { placeholder: placeHolder } : {})}
+      {...(disabled ? { disabled } : {})}
+      {...(tabIndex && tabIndex > 0 ? {tabIndex} : {})}
+      {...(title && title?.length > 0 ? { title } : {})}
     />;
   };
 
@@ -182,7 +189,7 @@ const Dropdown = ({
     <div className={`rcsd rcsd-dropdown${disabled ? ' disabled' : ''} ${className}`} {...rest}>
       <div className={`rcsd-input ${inputContainerClassName}`} ref={inputRef} onClick={handleInputClick}>
         {renderInputInternal()}
-        {clearable && internalSelectedItem && <i aria-hidden="true" className="clear" onClick={handleClear} />}
+        {clearable && (internalSelectedItem || (allowFreeFormText && value?.length > 0)) && <i aria-hidden="true" className="clear" onClick={handleClear} />}
         <i aria-hidden="true" className="icon" />
       </div>
       {menuIsOpen && renderMenuInternal()}
