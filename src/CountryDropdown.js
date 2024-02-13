@@ -53,6 +53,8 @@ const CountryDropdown = ({
   /** add classes to the prioritized items container */
   prioritizedClassName = '',
   tabIndex,
+  title,
+  width,
   ...rest
 }) => {
 
@@ -124,8 +126,9 @@ const CountryDropdown = ({
       itemClassName={itemClassName}
       tabIndex={tabIndex}
       title={title}
+      width={width}
       {...rest}
-      onRenderInput={(option, ref, value, placeHolder, onChangeHandler) => {
+      onRenderInput={(option, ref, value, placeHolder, onChangeHandler, onFocus, onBlur) => {
         return (<div className='wrapped-input'>{showFlags && option && <i className={`${option.iso2.toLowerCase()} flag`} />}<input
           className={`dropdown ${inputClassName}`}
           aria-autocomplete="list"
@@ -133,6 +136,8 @@ const CountryDropdown = ({
           onChange={onChangeHandler}
           value={value || ''}
           ref={ref}
+          onFocus={onFocus}
+          onBlur={onBlur}
           {...(placeHolder ? { placeholder: placeHolder } : {})}
           {...(disabled ? { disabled } : {})}
           {...(tabIndex && tabIndex > 0 ? { tabIndex } : {})}

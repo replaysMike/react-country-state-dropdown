@@ -46,6 +46,7 @@ const PhoneInput = ({
   prioritizedClassName = '',
   tabIndex,
   title,
+  width,
   ...rest
 }) => {
   const [countries, setCountries] = useState([]);
@@ -135,8 +136,9 @@ const PhoneInput = ({
         itemClassName={itemClassName}
         tabIndex={tabIndex}
         title={title}
+        width={width}
         {...rest}
-        onRenderInput={(option, ref, value, placeHolder, onChangeHandler) => {
+        onRenderInput={(option, ref, value, placeHolder, onChangeHandler, onFocus, onBlur) => {
           return (<>{showFlags && option && <i className={`${option.iso2.toLowerCase()} flag`} />}<input
             className={`dropdown ${dropdownInputClassName}`}
             aria-autocomplete="list"
@@ -144,6 +146,8 @@ const PhoneInput = ({
             onChange={onChangeHandler}
             value={option && option.phone_code && `+${option.phone_code}` || ''}
             ref={ref}
+            onFocus={onFocus}
+            onBlur={onBlur}
             {...(placeHolder ? { placeholder: placeHolder } : {})}
             {...(disabled ? { disabled } : {})}
             {...(tabIndex && tabIndex > 0 ? { tabIndex } : {})}

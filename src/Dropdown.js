@@ -50,6 +50,9 @@ const Dropdown = ({
   itemClassName = '',
   tabIndex,
   title,
+  onFocus,
+  onBlur,
+  width,
   ...rest
 }) => {
   
@@ -103,10 +106,10 @@ const Dropdown = ({
     setInternalSelectedItem(selectedItem);
   }, [value, internalOptions]);
 
-  const handleInputClick = () => {
+  const handleInputClick = (e) => {
     if (disabled) return;
 
-    setMenuIsOpen(!menuIsOpen);
+    setMenuIsOpen(true);
   };
 
   const handleTextInputChange = (e) => {
@@ -128,6 +131,7 @@ const Dropdown = ({
     if (allowFreeFormText) {
       if (onChange) onChange(e, e.target.value);
     }
+    if (onSearchInputChange) onSearchInputChange(e);
   };
 
   const handleItemSelect = (e, option) => {
@@ -147,6 +151,19 @@ const Dropdown = ({
     setIsFiltered(false);
 
     if (onChange) onChange(e, null);
+  };
+
+  const handleFocus = (e) => {
+    setMenuIsOpen(true);
+    if (onFocus) onFocus(e);
+  };
+
+  const handleBlur = (e) => {
+    // if we close the menu immediately, we won't receive a select event
+    setTimeout(() => {
+      setMenuIsOpen(false);
+    }, 100);
+    if (onBlur) onBlur(e);
   };
 
   const renderMenuInternal = () => {
@@ -170,7 +187,7 @@ const Dropdown = ({
   };
 
   const renderInputInternal = () => {
-    if (onRenderInput) return onRenderInput(internalSelectedItem, searchRef, internalValue, placeHolder, handleTextInputChange);
+    if (onRenderInput) return onRenderInput(internalSelectedItem, searchRef, internalValue, placeHolder, handleTextInputChange, handleFocus, handleBlur);
     return <input
       className={`dropdown ${inputClassName}`}
       aria-autocomplete="list"
@@ -178,6 +195,8 @@ const Dropdown = ({
       onChange={handleTextInputChange}
       value={internalValue || ''}
       ref={searchRef}
+      onFocus={handleFocus}
+      onBlur={handleBlur}
       {...(placeHolder ? { placeholder: placeHolder } : {})}
       {...(disabled ? { disabled } : {})}
       {...(tabIndex && tabIndex > 0 ? {tabIndex} : {})}
@@ -186,7 +205,7 @@ const Dropdown = ({
   };
 
   return (
-    <div className={`rcsd rcsd-dropdown${disabled ? ' disabled' : ''} ${className}`} {...rest}>
+    <div className={`rcsd rcsd-dropdown${disabled ? ' disabled' : ''} ${className}`} {...(width ? { style: { width: `${width}px` } } : {})} {...rest}>
       <div className={`rcsd-input ${inputContainerClassName}`} ref={inputRef} onClick={handleInputClick}>
         {renderInputInternal()}
         {clearable && (internalSelectedItem || (allowFreeFormText && value?.length > 0)) && <i aria-hidden="true" className="clear" onClick={handleClear} />}

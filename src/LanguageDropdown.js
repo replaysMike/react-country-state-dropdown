@@ -48,6 +48,7 @@ const LanguageDropdown = ({
   prioritizedClassName = '',
   tabIndex,
   title,
+  width,
   ...rest
 }) => {
 
@@ -118,6 +119,7 @@ const LanguageDropdown = ({
       itemClassName={itemClassName}
       tabIndex={tabIndex}
       title={title}
+      width={width}
       {...rest}
       onRenderMenu={(itemRenderer, selected, isFiltered, striped, handleItemSelect) => {
         return <div className={`menu ${menuClassName}`}>

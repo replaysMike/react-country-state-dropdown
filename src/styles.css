@@ -19,6 +19,14 @@
   border: 1px solid #96c8da;
 }
 
+.rcsd.rcsd-dropdown .rcsd-input:has(input:active:hover) {
+  color: #aaa;
+}
+
+.rcsd.rcsd-dropdown .rcsd-input input:active:hover {
+  color: #aaa;
+}
+
 .rcsd.rcsd-dropdown .rcsd-input {
   border: 1px solid #ccc;
   border-radius: 5px;

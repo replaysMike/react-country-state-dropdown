@@ -56,6 +56,8 @@ const CityDropdown = ({
   /** add classes to the prioritized items container */
   prioritizedClassName = '',
   tabIndex,
+  title,
+  width,
   ...rest
 }) => {
 
@@ -159,6 +161,8 @@ const CityDropdown = ({
       itemsClassName={itemsClassName}
       itemClassName={itemClassName}
       tabIndex={tabIndex}
+      title={title}
+      width={width}
       {...rest}
       onRenderEmpty={() => selectedCountry ? (selectedState ? emptyLabel : noStateLabel) : noCountryLabel }
       onRenderMenu={(itemRenderer, selected, isFiltered, striped, handleItemSelect) => {

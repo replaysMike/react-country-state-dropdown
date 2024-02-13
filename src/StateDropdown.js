@@ -52,6 +52,7 @@ const StateDropdown = ({
   prioritizedClassName = '',
   tabIndex,
   title,
+  width,
   ...rest
 }) => {
 
@@ -137,6 +138,7 @@ const StateDropdown = ({
       itemClassName={itemClassName}
       tabIndex={tabIndex}
       title={title}
+      width={width}
       {...rest}
       onRenderEmpty={() => selectedCountry ? emptyLabel : noCountryLabel}
       onRenderMenu={(itemRenderer, selected, isFiltered, striped, handleItemSelect) => {
