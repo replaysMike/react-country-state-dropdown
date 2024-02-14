@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import Dropdown from "./Dropdown";
-import { data_languages } from "./data/languages";
 import { getLanguage } from './Utils';
 import _ from 'underscore';
 
@@ -10,6 +9,8 @@ import _ from 'underscore';
 const LanguageDropdown = ({
   name,
   value,
+  /** source for geographic data. Can be served from local, or CDN */
+  src = 'https://replaysmike.github.io/react-country-state-dropdown/data/',
   /** onChange handler, fired when an item is selected */
   onChange,
   /** onSearchInputChange handler, fired when text search is input */

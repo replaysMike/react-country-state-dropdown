@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Dropdown from "./Dropdown";
-import { data_countries } from "./data/countries";
-import { getCountry } from "./Utils";
+import { getCountry, getData } from "./Utils";
 import _ from 'underscore';
 
 /**
@@ -10,6 +9,8 @@ import _ from 'underscore';
 const CountryDropdown = ({
   name,
   value,
+  /** source for geographic data. Can be served from local, or CDN */
+  src = 'https://replaysmike.github.io/react-country-state-dropdown/data/',
   /** onChange handler, fired when an item is selected */
   onChange,
   /** onSearchInputChange handler, fired when text search is input */
@@ -66,8 +67,9 @@ const CountryDropdown = ({
   const [countries, setCountries] = useState([]);
   const [internalValue, setInternalValue] = useState(translateValue(value));
   const [prioritizedCountries, setPrioritizedCountries] = useState([]);
+  const [dataCountries, setDataCountries] = useState([]);
 
-  useEffect(() => {
+  const updateDataCountries = async () => {
     const sortByCaseInsensitive = (a, b) => {
       const nameA = a.name.toUpperCase();
       const nameB = b.name.toUpperCase();
@@ -77,8 +79,12 @@ const CountryDropdown = ({
         return 1;
       return 0;
     };
-    // load countries data
-    let orderedCountries = data_countries.map(country => ({ ...country, value: country.name }));
+    // fetch countries data
+    if (!dataCountries || dataCountries.length === 0) {
+      dataCountries = await getData(src, '_countries.json');
+      setDataCountries(dataCountries);
+    }
+    let orderedCountries = dataCountries.map(country => ({ ...country, value: country.name }));
     if (priority && priority.length > 0) {
       if (removePrioritized)
         orderedCountries = _.filter(orderedCountries, i => !priority.includes(i.iso2));
@@ -86,12 +92,16 @@ const CountryDropdown = ({
 
       const prioritizedCountries = [];
       for (let i = 0; i < priority.length; i++) {
-        const item = _.find(data_countries, x => x.iso2 === priority[i]);
+        const item = _.find(dataCountries, x => x.iso2 === priority[i]);
         prioritizedCountries.push({ ...item, value: item.name });
       }
       setPrioritizedCountries(prioritizedCountries);
     }
     setCountries(orderedCountries);
+  };
+
+  useEffect(() => {
+    updateDataCountries();
   }, []);
 
   useEffect(() => {

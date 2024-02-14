@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import Dropdown from "./Dropdown";
-import { data_cities } from "./data/cities";
-import { data_countries } from "./data/countries";
 import { getCity, getCountry, getState } from './Utils';
 import _ from 'underscore';
 
@@ -10,6 +8,8 @@ import _ from 'underscore';
  */
 const CityDropdown = ({
   name,
+  /** source for geographic data. Can be served from local, or CDN */
+  src = 'https://replaysmike.github.io/react-country-state-dropdown/data/',
   /** country code, or numeric country id */
   country,
   /** state code, or numeric state id */

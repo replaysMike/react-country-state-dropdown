@@ -10,6 +10,8 @@ import _ from 'underscore';
 const PhoneInput = ({
   name,
   value,
+  /** source for geographic data. Can be served from local, or CDN */
+  src = 'https://replaysmike.github.io/react-country-state-dropdown/data/',
   /** preselect the default country using a country object, name or ISO2 country code */
   country,
   /** onChange handler, fired when an item is selected */

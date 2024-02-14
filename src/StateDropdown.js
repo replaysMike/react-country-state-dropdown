@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import Dropdown from "./Dropdown";
-import { data_states } from "./data/states";
 import _ from 'underscore';
 import { getCountry, getState } from './Utils';
 
@@ -10,6 +9,8 @@ import { getCountry, getState } from './Utils';
 const StateDropdown = ({
   name,
   value,
+  /** source for geographic data. Can be served from local, or CDN */
+  src = 'https://replaysmike.github.io/react-country-state-dropdown/data/',
   /** the country using a country object, name or ISO2 country code */
   country,
   /** onChange handler, fired when an item is selected */
@@ -65,8 +66,10 @@ const StateDropdown = ({
   const [internalValue, setInternalValue] = useState(translateValue(value, country));
   const [states, setStates] = useState([]);
   const [prioritizedStates, setPrioritizedStates] = useState([]);
+  const [dataStates, setDataStates] = useState([]);
 
-  useEffect(() => {
+  const updateDataCountries = async (selectedCountry) => {
+    let data = dataStates;
     const sortByCaseInsensitive = (a, b) => {
       const nameA = a.name.toUpperCase();
       const nameB = b.name.toUpperCase();
@@ -77,7 +80,17 @@ const StateDropdown = ({
       return 0;
     };
     if (selectedCountry) {
-      let matchingStates = _.find(data_states, i => i.id === selectedCountry?.id)?.states;
+      // fetch states data
+      if (!dataStates || dataStates.length === 0) {
+        const countryCode = selectedCountry.iso2.toUpperCase();
+        const newData = await getData(src, `states-${countryCode}.json`);
+        const newStates = _.filter(dataStates, i => i.country !== countryCodee);
+        newStates.push({ country: countryCode, states: newData });
+        setDataStates(newStates);
+        data = newStates;
+      }
+
+      let matchingStates = _.find(data, i => i.id === selectedCountry?.id)?.states;
       if (matchingStates) {
         // load states data
         let orderedStates = matchingStates.map(state => ({ ...state, value: state.name }));
@@ -100,6 +113,10 @@ const StateDropdown = ({
       setStates([]);
       setInternalValue(null);
     }
+  };
+
+  useEffect(() => {
+    updateDataCountries(selectedCountry);
   }, [selectedCountry]);
 
   useEffect(() => {
