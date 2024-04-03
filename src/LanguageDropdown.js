@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import Dropdown from "./Dropdown";
-import { getLanguage } from './Utils';
+import { defaultOptions, getLanguage, getLanguages } from './Utils';
 import _ from 'underscore';
 
 /**
@@ -47,22 +47,41 @@ const LanguageDropdown = ({
   itemClassName = '',
   /** add classes to the prioritized items container */
   prioritizedClassName = '',
+  /** true to show native language */
+  showNative = true,
+  /** true to use native language */
+  useNative = false,
   tabIndex,
   title,
   width,
   ...rest
 }) => {
 
-  const translateValue = (val) => {
-    const valueObject = getLanguage(val);
-    return valueObject?.name ?? (allowFreeFormText ? val : null);
+  const formatName = useCallback((language) => {
+    if (!language || typeof language !== 'object')
+      return language;
+    if (showNative)
+      return `${language.name} (${language.native})`;
+    else if (useNative)
+      return language.native;
+
+    return language.name;
+  }, [showNative, useNative]);
+
+  const translateValue = async (val) => {
+    const valueObject = await getLanguage(val, { ...defaultOptions, src });
+    const value = valueObject?.name ?? (allowFreeFormText ? val : null);
+    return value;
   };
 
   const [languages, setLanguages] = useState([]);
-  const [internalValue, setInternalValue] = useState(translateValue(value));
+  const [internalValue, setInternalValue] = useState(value);
   const [prioritizedLanguages, setPrioritizedLanguages] = useState([]);
 
-  useEffect(() => {
+  const updateDataLanguages = async () => {
+    // load languages data
+    const dataLanguages = await getLanguages({ ...defaultOptions, src });
+    
     const sortByCaseInsensitive = (a, b) => {
       const nameA = a.name.toUpperCase();
       const nameB = b.name.toUpperCase();
@@ -73,7 +92,7 @@ const LanguageDropdown = ({
       return 0;
     };
     // load languages data
-    let orderedLanguages = data_languages.map(language => ({ ...language, value: language.name }));
+    let orderedLanguages = dataLanguages.map(language => ({ ...language, value: language.name }));
     if (priority && priority.length > 0) {
       if (removePrioritized)
         orderedLanguages = _.filter(orderedLanguages, i => !priority.includes(i.code));
@@ -81,17 +100,22 @@ const LanguageDropdown = ({
 
       const prioritizedLanguages = [];
       for (let i = priority.length - 1; i >= 0; i--) {
-        const item = _.find(data_languages, x => x.code === priority[i]);
+        const item = _.find(dataLanguages, x => x.code === priority[i]);
         prioritizedLanguages.push({ ...item, value: item.name });
       }
       setPrioritizedLanguages(prioritizedLanguages);
     }
-    setLanguages(orderedLanguages);
+
+    const displayLanguages = orderedLanguages.map(i => ({...i, name: i.name}));
+    setLanguages(displayLanguages);
+  };
+
+  useEffect(() => {
+    updateDataLanguages();
   }, []);
 
   useEffect(() => {
-    const newValue = translateValue(value);
-    setInternalValue(newValue);
+    translateValue(value).then(newValue => setInternalValue(newValue));
   }, [value]);
 
   return (
@@ -121,6 +145,8 @@ const LanguageDropdown = ({
       tabIndex={tabIndex}
       title={title}
       width={width}
+      // supply a custom formatter for formatting the native value
+      formatter={formatName}
       {...rest}
       onRenderMenu={(itemRenderer, selected, isFiltered, striped, handleItemSelect) => {
         return <div className={`menu ${menuClassName}`}>
@@ -150,7 +176,7 @@ const LanguageDropdown = ({
           data-id={option.id}
           data-code={option.code}
           onClick={(e) => handleItemSelect(e, option)}
-        >{option.name}</div>);
+        >{formatName(option)}</div>);
         return output;
       }}
     />

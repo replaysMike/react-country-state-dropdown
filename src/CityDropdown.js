@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Dropdown from "./Dropdown";
-import { getCity, getCountry, getState } from './Utils';
+import { defaultOptions, getCities, getCity, getCountry, getState } from './Utils';
 import _ from 'underscore';
 
 /**
@@ -61,9 +61,10 @@ const CityDropdown = ({
   ...rest
 }) => {
 
-  const translateValue = (val, state, country) => {
-    const valueObject = getCity(val, state, country);
-    return valueObject?.name ?? (allowFreeFormText ? val : null);
+  const translateValue = async (val, state, country) => {
+    const valueObject = await getCity(val, state, country, { ...defaultOptions, src });
+    const value = valueObject?.name ?? (allowFreeFormText ? val : null);
+    return value;
   };
 
   const [selectedCountry, setSelectedCountry] = useState(country);
@@ -72,7 +73,7 @@ const CityDropdown = ({
   const [cities, setCities] = useState([]);
   const [prioritizedCities, setPrioritizedCities] = useState([]);
 
-  useEffect(() => {
+  const updateDataCountryState = async (selectedCountry, selectedState) => {
     const sortByCaseInsensitive = (a, b) => {
       const nameA = a.name.toUpperCase();
       const nameB = b.name.toUpperCase();
@@ -83,9 +84,12 @@ const CityDropdown = ({
       return 0;
     };
     if (selectedCountry && selectedState) {
-      let countryCities = _.find(data_cities, i => i.id === selectedCountry.id)?.states;
-      let matchingCities = _.find(countryCities, i => i.id === selectedState.id)?.cities;
-        
+      // selectedCountry/selectedState may be an object, or string value
+      const matchingCities = await getCities(
+        selectedCountry,
+        selectedState,
+        { ...defaultOptions, src });
+
       if (matchingCities) {
         // load cities data
         let orderedCities = matchingCities.map(state => ({ ...state, value: state.name }));
@@ -108,32 +112,46 @@ const CityDropdown = ({
       setCities([]);
       setInternalValue(null);
     }
-  }, [selectedCountry, selectedState]);
+  };
 
-  useEffect(() => {
-    const selectedCountry = getCountry(country);
+  const updateDataCountry = async (country) => {
+    const selectedCountry = await getCountry(country, { ...defaultOptions, src });
     if (!selectedCountry) console.error(`Could not find a country matching the value`, country);
 
     setSelectedCountry(selectedCountry);
-  }, [country]);
+  };
 
-  useEffect(() => {
+  const updateDataState = async (state) => {
     let selectedState = null;
     if (selectedCountry && state) {
       // first find by the country
-      selectedState = getState(state, selectedCountry);
-      if (selectedState === undefined){
-        console.error(`There were no states found for specified country.`, selectedCountry);
+      selectedState = await getState(state, selectedCountry, { ...defaultOptions, src });
+      if (selectedState === undefined) {
+        console.error(`There were no states found for specified country.`, state, selectedCountry, selectedState);
         return;
       }
     }
 
     setSelectedState(selectedState);
+  };
+
+  useEffect(() => {
+    updateDataCountryState(selectedCountry, selectedState);
+  }, [selectedCountry, selectedState]);
+
+  useEffect(() => {
+    updateDataCountry(country);
+  }, [country]);
+
+  useEffect(() => {
+    updateDataState(state);
   }, [state]);
 
   useEffect(() => {
-    const newValue = translateValue(value, state, country);
-    setInternalValue(newValue);
+    if (value) 
+      translateValue(value, state, country).then(newValue => setInternalValue(newValue));
+    else
+      setInternalValue(null);
   }, [value]);
 
   return (
@@ -177,7 +195,7 @@ const CityDropdown = ({
                   data-countryid={selectedCountry.id}
                   data-country={selectedCountry.iso2}
                   data-stateid={selectedState.id}
-                  data-state={selectedState.code}
+                  data-state={selectedState.state_code}
                   data-latitude={option.latitude}
                   data-longitude={option.longitude}
                   onClick={(e) => handleItemSelect(e, option)}
@@ -199,7 +217,7 @@ const CityDropdown = ({
           data-countryid={selectedCountry.id}
           data-country={selectedCountry.iso2}
           data-stateid={selectedState.id}
-          data-state={selectedState.code}
+          data-state={selectedState.state_code}
           data-latitude={option.latitude}
           data-longitude={option.longitude}
           onClick={(e) => handleItemSelect(e, option)}

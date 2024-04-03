@@ -127,6 +127,7 @@
   cursor: pointer;
   padding: 4px 10px;
   pointer-events: all;
+  background-color: transparent;
 }
 
 .rcsd.rcsd-dropdown .menu .items .item.selected {
