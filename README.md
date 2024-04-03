@@ -1,7 +1,7 @@
 # react-country-state-dropdown
 [![GitHub release](https://img.shields.io/github/release/replaysMike/react-country-state-dropdown.svg)](https://GitHub.com/replaysMike/react-country-state-dropdown/releases/)
 [![GitHub commits](https://img.shields.io/github/commits-since/replaysMike/react-country-state-dropdown/v1.0.0.svg)](https://GitHub.com/replaysMike/react-country-state-dropdown/commit/)
-[![GitHub license](https://img.shields.io/github/license/replaysMike/Binner.svg)](https://github.com/replaysMike/Binner/blob/master/LICENSE)
+[![GitHub license](https://img.shields.io/github/license/replaysMike/react-country-state-dropdown.svg)](https://github.com/replaysMike/react-country-state-dropdown/blob/master/LICENSE)
 
 A responsive country, state, city, and language dropdown for React (and now a phone input too!)
 
