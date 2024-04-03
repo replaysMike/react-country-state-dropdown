@@ -1,21 +1,27 @@
 import { parsePhoneNumber as parsePhoneNumberExt, isValidPhoneNumber as isValidPhoneNumberExt, AsYouType } from 'libphonenumber-js';
 import _ from 'underscore';
 import { settings } from './constants';
+import dataManager from './dataManager';
 
-const defaultOptions = {
+export const defaultOptions = {
   src: settings.src,
   files: {
      countries: settings.countriesFile,
      states: settings.statesFile,
      cities: settings.citiesFile,
+     languages: settings.languagesFile
   }
+};
+
+export const wrapAsObject = (value, propertyName) => {
+  return typeof value === 'object' ? value : { [propertyName]: value };
 };
 
 /**
  * Get all of the countries
  */
 export const getCountries = async (options = defaultOptions) => {
-  return await getData(options.src, options.files.countries);
+  return await dataManager.fetchCountries(options);
 };
 
 /**
@@ -24,9 +30,9 @@ export const getCountries = async (options = defaultOptions) => {
 export const getStates = async (country, options = defaultOptions) => {
   if (!country) {
     console.error('No country specified!');
-    return;
+    return [];
   }
-  return await getData(src, options.files.states.replace('{country}', country));
+  return await dataManager.fetchStates(wrapAsObject(country, 'iso2'), options);
 };
 
 /**
@@ -35,20 +41,20 @@ export const getStates = async (country, options = defaultOptions) => {
 export const getCities = async (country, state, options = defaultOptions) => {
   if (!country) {
     console.error('No country specified!');
-    return;
+    return [];
   }
   if (!state) {
     console.error('No country state!');
-    return;
+    return [];
   }
-  return await getData(options.src, options.files.cities.replace('{country}', country).replace('{state}', state));
+  return await dataManager.fetchCities(wrapAsObject(country, 'iso2'), wrapAsObject(state, 'state_code'), options);
 };
 
 /**
  * Get all of the languages
  */
 export const getLanguages = async (options = defaultOptions) => {
-  return await getData(src, file);
+  return await dataManager.fetchLanguages(options);
 };
 
 /**
@@ -69,7 +75,14 @@ export const getCountry = async (country, options = defaultOptions) => {
       || _.find(countries, i => i.name.toUpperCase() === countryUpper);
   } else if (typeof country === 'object' && country !== null) {
     // find by object
-    selectedCountry = _.find(countries, i => i.id === country.id);
+    if (country.id) {
+      selectedCountry = _.find(countries, i => i.id === country.id);
+    } else if(country.iso2) {
+      const countryUpper = country.iso2.toUpperCase();
+      selectedCountry = _.find(countries, i => i.iso2 === countryUpper)
+        || _.find(countries, i => i.iso3 === countryUpper)
+        || _.find(countries, i => i.name.toUpperCase() === countryUpper);
+    }
   }
   return selectedCountry;
 };
@@ -80,23 +93,28 @@ export const getCountry = async (country, options = defaultOptions) => {
  * @param {string} country Country name, ISO code, numerical id or object
  */
 export const getState = async (state, country, options = defaultOptions) => {
-  const selectedCountry = getCountry(country, options);
+  const selectedCountry = await getCountry(country, options);
   const states = await getStates(selectedCountry, options);
   
   let selectedState = null;
   if (selectedCountry) {
-    let matchingStates = _.find(states, i => i.id === selectedCountry.id)?.states;
     if(typeof state === 'number') {
       // find by id
-      selectedState = _.find(matchingStates, i => i.id === state);
+      selectedState = _.find(states, i => i.id === state);
     } else if (typeof state === 'string') {
       // find by code/name
       const stateUpper = state.toUpperCase();
-      selectedState = _.find(matchingStates, i => i.code === stateUpper)
-        || _.find(matchingStates, i => i.name === stateUpper);
+      selectedState = _.find(states, i => i.state_code === stateUpper)
+        || _.find(states, i => i.name === stateUpper);
     } else if (typeof state === 'object' && state !== null) {
       // find by object
-      selectedState = _.find(matchingStates, i => i.id === state.id);
+      if (state.id)
+        selectedState = _.find(states, i => i.id === state.id);
+      else if (state.state_code) {
+        const stateUpper = state.state_code.toUpperCase();
+        selectedState = _.find(states, i => i.state_code === stateUpper)
+          || _.find(states, i => i.name === stateUpper);
+      }
     }
   }
   return selectedState;
@@ -123,23 +141,26 @@ export const getStatesForCountry = async (country, options = defaultOptions) => 
  */
 export const getCity = async (city, state, country, options = defaultOptions) => {
   const selectedCountry = await getCountry(country, options);
-  const selectedState = await getState(state, selectedCountry, options);
+  const selectedState = await getState(wrapAsObject(state, 'state_code'), selectedCountry, options);
   let selectedCity = null;
   if (selectedCountry && selectedState) {
-    const cities = cities = await getCities(selecetedCountry, selectedState, options);
-    let countryCities = _.find(cities, i => i.id === selectedCountry.id)?.states;
-    let stateCities = _.find(countryCities, i => i.id === selectedState.id)?.cities;
-    if (stateCities) {
+    const cities = await getCities(wrapAsObject(selectedCountry, 'iso2'), selectedState, options);
+    if (cities) {
       if (typeof city === 'number') {
         // find by id
-        selectedCity = _.find(stateCities, i => i.id === city);
+        selectedCity = _.find(cities, i => i.id === city);
       } else if (typeof city === 'string') {
         // find by name
         const cityLower = city.toLowerCase();
-        selectedCity = _.find(stateCities, i => i.name.toLowerCase() === cityLower);
+        selectedCity = _.find(cities, i => i.name.toLowerCase() === cityLower);
       } else if (typeof city === 'object' && city !== null) {
         // find by object
-        selectedCity = _.find(stateCities, i => i.id === city.id);
+        if (city.id) {
+          selectedCity = _.find(cities, i => i.id === city.id);
+        } else if(city.name) {
+          const cityLower = city.toLowerCase();
+          selectedCity = _.find(cities, i => i.name.toLowerCase() === cityLower);
+        }
       }
     }
   }
@@ -153,13 +174,9 @@ export const getCity = async (city, state, country, options = defaultOptions) =>
  */
 export const getCitiesForState = async (state, country, options = defaultOptions) => {
   const selectedCountry = await getCountry(country, options);
-  const selectedState = await getState(state, selectedCountry, options);
-  let selectedCities = null;
-  if (selectedCountry && selectedState) {
-    let countryCities = _.find(data_cities, i => i.id === selectedCountry.id)?.states;
-    selectedCities = _.find(countryCities, i => i.id === selectedState.id)?.cities;
-  }
-  return selectedCities;
+  const selectedState = await getState(wrapAsObject(state, 'state_code'), selectedCountry, options);
+  const cities = await getCities(wrapAsObject(selectedCountry, 'iso2'), selectedState, options);
+  return cities;
 };
 
 /**
@@ -173,8 +190,8 @@ export const getLanguage = async (language, options = defaultOptions) => {
     const languageLower = language.toLowerCase();
     const languages = await getLanguages(options);
     selectedLanguage = _.find(languages, i => i.code === languageLower)
-      || _.find(getLanguages(), i => i.name === languageLower)
-      || _.find(getLanguages(), i => i.native === languageLower);
+      || _.find(languages, i => i.name === languageLower)
+      || _.find(languages, i => i.native === languageLower);
   } else if (typeof language === 'object' && language !== null) {
     // find by object
     const languageLower = language.code.toLowerCase();
@@ -270,22 +287,3 @@ export const getCountriesForPhoneNumber = async (phoneNumber, options = defaultO
       return null;
   }
 };
-
-/**
- * Get the geographic data from a local or remote source
- * @param {string} src The URL portion of the source data to download
- * @param {string} filename The filename to fetch
- */
-export const getData = async (src, filename) => {
-  console.log('getData()', filename);
-  const data = await fetch(`${src}${filename}`).then(async (response) => {
-    if(response.ok) {
-      const data = await response.json();
-      console.log('rx getData()', filename, data);
-      return data;
-    }else{
-      console.error('Failed to fetch geo data', response);
-    }
-  });
-  return data;
-}

@@ -12,8 +12,10 @@ const Dropdown = ({
   value,
   /** Array of options */
   options,
-  /** onChange handler, fired when an item is selected */
+  /** onChange handler, fired when an item is selected or when text is entered */
   onChange,
+  /** onSelect handler, fired when an item is selected */
+  onSelect,
   /** onSearchInputChange handler, fired when text search is input */
   onSearchInputChange,
   /** override the render menu */
@@ -48,6 +50,8 @@ const Dropdown = ({
   itemsClassName = '',
   /** add classes to the item */
   itemClassName = '',
+  /** supply a custom formatter for formatting the value displayed */
+  formatter,
   tabIndex,
   title,
   onFocus,
@@ -73,9 +77,10 @@ const Dropdown = ({
         // reset filtering
         setIsFiltered(false);
         setInternalOptionsFiltered(internalOptions);
-        const newInternalValue = internalSelectedItem?.value || '';
+        const newInternalValue = formatter ? formatter(internalSelectedItem) : internalSelectedItem?.value || '';
         setInternalValue(newInternalValue);
         if (onChange) onChange(e, newInternalValue);
+        if (onSelect) onSelect(e, newInternalValue);
       } else {
         // fire event handler for freeform text
         setInternalSelectedItem(e, internalValue);
@@ -84,7 +89,7 @@ const Dropdown = ({
     if (inputRef.current && !inputRef.current.contains(e.target)) {
       setMenuIsOpen(false);
     }
-  }, [isFiltered, allowFreeFormText, internalValue, disabled]);
+  }, [isFiltered, allowFreeFormText, internalValue, disabled, formatter]);
 
   useEffect(() => {
     window.addEventListener("click", globalClickHandler);
@@ -99,17 +104,36 @@ const Dropdown = ({
   }, [options]);
 
   useEffect(() => {
-    setInternalValue(value || '');
     setInternalOptionsFiltered(internalOptions);
     setIsFiltered(false);
     const selectedItem = _.find(options, i => i.value === value);
     setInternalSelectedItem(selectedItem);
+    if (selectedItem)
+      setInternalValue((formatter ? formatter(selectedItem) : value) || '');
+    else
+      setInternalValue(value || '');
   }, [value, internalOptions]);
 
   const handleInputClick = (e) => {
     if (disabled) return;
 
     setMenuIsOpen(true);
+  };
+
+  const handleKeyUp = (e) => {
+    switch(e.keyCode) {
+      case 13:
+        setInternalOptionsFiltered(internalOptions);
+        setMenuIsOpen(false);
+        setIsFiltered(false);
+
+        if (internalSelectedItem) {
+          setInternalValue(formatter ? formatter(internalSelectedItem) : internalSelectedItem.value);
+          if (onChange) onChange(e, internalSelectedItem);
+          if (onSelect) onSelect(e, internalSelectedItem);
+        }
+        break;
+    }
   };
 
   const handleTextInputChange = (e) => {
@@ -126,21 +150,24 @@ const Dropdown = ({
         setIsFiltered(false);
 
         if (onChange) onChange(e, '');
+        if (onSelect) onSelect(e, '');
       }
+      if (onSearchInputChange) onSearchInputChange(e);
     }
     if (allowFreeFormText) {
+      setInternalValue(e.target.value);
       if (onChange) onChange(e, e.target.value);
     }
-    if (onSearchInputChange) onSearchInputChange(e);
   };
 
   const handleItemSelect = (e, option) => {
     setInternalSelectedItem(option);
-    setInternalValue(option.value);
+    setInternalValue(formatter ? formatter(option) : option.value);
     setInternalOptionsFiltered(internalOptions);
     setIsFiltered(false);
 
     if (onChange) onChange(e, option);
+    if (onSelect) onSelect(e, option);
   };
 
   const handleClear = (e) => {
@@ -151,6 +178,7 @@ const Dropdown = ({
     setIsFiltered(false);
 
     if (onChange) onChange(e, null);
+    if (onSelect) onSelect(e, null);
   };
 
   const handleFocus = (e) => {
@@ -197,6 +225,7 @@ const Dropdown = ({
       ref={searchRef}
       onFocus={handleFocus}
       onBlur={handleBlur}
+      onKeyUp={handleKeyUp}
       {...(placeHolder ? { placeholder: placeHolder } : {})}
       {...(disabled ? { disabled } : {})}
       {...(tabIndex && tabIndex > 0 ? {tabIndex} : {})}

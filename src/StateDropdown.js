@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Dropdown from "./Dropdown";
 import _ from 'underscore';
-import { getCountry, getState } from './Utils';
+import { defaultOptions, getCountry, getState, getStates } from './Utils';
 
 /**
  * State/province dropdown component
@@ -57,19 +57,18 @@ const StateDropdown = ({
   ...rest
 }) => {
 
-  const translateValue = (val, country) => {
-    const valueObject = getState(val, country);
-    return valueObject?.name ?? (allowFreeFormText ? val : null);
+  const translateValue = async (val, country) => {
+    const valueObject = await getState(val, country, { ...defaultOptions, src });
+    const value = valueObject?.name ?? (allowFreeFormText ? val : null);
+    return value;
   };
 
   const [selectedCountry, setSelectedCountry] = useState(null);
-  const [internalValue, setInternalValue] = useState(translateValue(value, country));
+  const [internalValue, setInternalValue] = useState(null);
   const [states, setStates] = useState([]);
   const [prioritizedStates, setPrioritizedStates] = useState([]);
-  const [dataStates, setDataStates] = useState([]);
 
-  const updateDataCountries = async (selectedCountry) => {
-    let data = dataStates;
+  const updateDataStates = async (selectedCountry) => {
     const sortByCaseInsensitive = (a, b) => {
       const nameA = a.name.toUpperCase();
       const nameB = b.name.toUpperCase();
@@ -79,54 +78,51 @@ const StateDropdown = ({
         return 1;
       return 0;
     };
+
     if (selectedCountry) {
       // fetch states data
-      if (!dataStates || dataStates.length === 0) {
-        const countryCode = selectedCountry.iso2.toUpperCase();
-        const newData = await getData(src, `states-${countryCode}.json`);
-        const newStates = _.filter(dataStates, i => i.country !== countryCodee);
-        newStates.push({ country: countryCode, states: newData });
-        setDataStates(newStates);
-        data = newStates;
-      }
-
-      let matchingStates = _.find(data, i => i.id === selectedCountry?.id)?.states;
-      if (matchingStates) {
-        // load states data
-        let orderedStates = matchingStates.map(state => ({ ...state, value: state.name }));
+      // selectedCountry may be an object, or string value
+      const loadedStates = await getStates(selectedCountry, { ...defaultOptions, src });
+      if (loadedStates) {
+        // order and prioritize
+        let orderedStates = loadedStates.map(state => ({ ...state, value: state.name }));
         if (priority && priority.length > 0) {
           if (removePrioritized)
-            orderedStates = _.filter(orderedStates, i => !priority.includes(i.code));
+            orderedStates = _.filter(orderedStates, i => !priority.includes(i.state_code));
           orderedStates.sort(sortByCaseInsensitive);
 
           const prioritizedStates = [];
           for (let i = 0; i < priority.length; i++) {
-            const item = _.find(matchingStates, x => x.code === priority[i]);
+            const item = _.find(loadedStates, x => x.state_code === priority[i]);
             prioritizedStates.push({ ...item, value: item.name });
           }
           setPrioritizedStates(prioritizedStates);
         }
         setStates(orderedStates);
+        return orderedStates;
       }
     } else {
       setPrioritizedStates([]);
       setStates([]);
       setInternalValue(null);
     }
+    return [];
   };
 
   useEffect(() => {
-    updateDataCountries(selectedCountry);
+    if (selectedCountry) updateDataStates(selectedCountry);
   }, [selectedCountry]);
 
   useEffect(() => {
-    const selectedCountry = getCountry(country);
-    setSelectedCountry(selectedCountry);
+    if (country) getCountry(country, { ...defaultOptions, src }).then((selectedCountry) => setSelectedCountry(selectedCountry));
   }, [country]);
 
   useEffect(() => {
-    const newValue = translateValue(value, country);
-    setInternalValue(newValue);
+    updateDataStates(country);
+    if (value) 
+      translateValue(value, country).then(newValue => setInternalValue(newValue));
+    else
+      setInternalValue(null);
   }, [value]);
 
   return (
@@ -134,12 +130,12 @@ const StateDropdown = ({
       placeHolder={placeHolder}
       options={states}
       onChange={(e, value) => {
-        if (onChange) onChange(e, value);
-      }
+          if (onChange) onChange(e, value);
+        }
       }
       onSearchInputChange={(e, value) => {
-        if (onSearchInputChange) onSearchInputChange(e, value);
-      }
+          if (onSearchInputChange) onSearchInputChange(e, value);
+        }
       }
       value={internalValue}
       striped={striped}
@@ -167,7 +163,7 @@ const StateDropdown = ({
                   key={key}
                   className={`item${option === selected ? ' selected' : ''} ${itemClassName}`}
                   data-id={option.id}
-                  data-code={option.code}
+                  data-code={option.state_code}
                   onClick={(e) => handleItemSelect(e, option)}
                 >{option.name}</div>
               ))}
@@ -184,7 +180,7 @@ const StateDropdown = ({
           aria-checked={selected ? 'true' : 'false'}
           aria-selected={selected ? 'true' : 'false'}
           data-id={option.id}
-          data-code={option.code}
+          data-code={option.state_code}
           onClick={(e) => handleItemSelect(e, option)}
         >{option.name}</div>);
         return output;
