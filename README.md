@@ -53,6 +53,10 @@ const Example = () => {
 
 ```
 
+## Data
+
+By default, the control will load the github hosted data files. Alternatively, you can [download the data](https://github.com/replaysMike/react-country-state-dropdown/raw/main/data/data.zip) zip file and host it yourself. Simply unzip the JSON files, and supply the `src` property to each control to tell it where to download from.
+
 ## Options
 
 ```<Dropdown />```
@@ -85,7 +89,7 @@ These attributes are common to all dropdowns. Rendering of the component is cont
 | menuClassName | No | `""` | `string` | Add classes to the menu |
 | itemsClassName | No | `""` | `string` | Add classes to the items container|
 | itemClassName | No | `""` | `string` | Add classes to the item |
-
+| src | No | `""` | `string` | The relative or absolute URL where the data files are hosted |
 ---
 
 ```<CountryDropdown />```
@@ -141,6 +145,8 @@ These attributes are common to all dropdowns. Rendering of the component is cont
 | priority | No | `['en']` | `array` | An array of ISO2 language codes (ex. 'en') to show at the top of the list. |
 | removePrioritized | No | `false` | `boolean` | True to remove prioritized countries from the main list when searching. | 
 | prioritizedClassName | No | `""` | `string` | Add classes to the prioritized items container |
+| showNative | No | `true` | `boolean` | True to show native language name in parenthesis after the english name |
+| useNative | No | `false` | `boolean` | True to show native language name instead of the english name |
 
 ---
 
@@ -189,6 +195,27 @@ const Example = () => {
       <CityDropdown clearable searchable striped allowFreeFormText country={country} state={state} value={city} onChange={handleSetCity} />
       <LanguageDropdown clearable searchable striped value={language} onChange={handleSetLanguage} />
       <PhoneInput clearable country={country} value={phone} onChange={handleSetPhone} />
+    </div>);
+};
+```
+
+Example on loading the JSON data from your own hosted location, located in the publicly accessible `custom-geo-data` folder of your own server.
+
+```javascript
+import React, { useState } from 'react';
+import { CountryDropdown } from "react-country-state-dropdown";
+
+const Example = () => {
+  const [country, setCountry] = useState(null);
+
+  const handleSetCountry = (e, value) => {
+    setCountry(value);
+    console.log(value);
+  };
+
+  return (
+    <div>
+      <CountryDropdown clearable searchable striped value={country} onChange={handleSetCountry} src="/custom-geo-data" />
     </div>);
 };
 ```
