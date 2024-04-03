@@ -68,9 +68,10 @@ By default, the control will load the github hosted data files. Alternatively, y
 These attributes are common to all dropdowns. Rendering of the component is controllable for full customization.
 
 | Parameter | Required? | Default | Type | Description |
-|:---|:---:|:---|:---|:---|
-| value | No | `""` | `string` | The currently selected value.
+|:---|:---|:---|:---|:---|
+| value | No | `""` | `string` | The currently selected value. |
 | options | No | `[]` | `array` | An array of options available to the dropdown. These are populated automatically for the `<CountryDropdown />, <StateDropdown />, <CityDropdown />, <LanguageDropdown />` controls. |
+| src | No | `"https://replaysmike.github.io/react-country-state-dropdown/data/"` | `string` | The relative or absolute URL where the data files are hosted. Default is to serve from hosted CDN. |
 | name | No | `""` | `string` | The name attribute of the generated select box. |
 | id | No | `""` | `string` | The ID of the generated select box. Not added by default. |
 | classes | No | `""` | `string` | Any additional space-separated classes you want to add. |
@@ -81,25 +82,31 @@ These attributes are common to all dropdowns. Rendering of the component is cont
 | searchable | No | `false` | `boolean` | True to allow text entry and filter the list by the searched value. | 
 | allowFreeFormText | No | `false` | `boolean` | True to allow entry of text that does not match any value in the options list. |
 | disabled | No | `false` | `boolean` | Disables the control. |
-| onChange | No | `-` | `function` | Callback that gets called when the user selects a value. |
+| onChange | No | `-` | `function` | Callback that gets called when the user selects a value or text input changes. |
+| onSelect | No | `-` | `function` | Callback that gets called when the user selects a value. |
 | onSearchInputChange | No | `-` | `function` | Callback that gets called when the text input is changed. |
 | onRenderMenu | No | `-` | `function` | Override the rendering of the menu container. |
 | onRenderItem | No | `-` | `function` | Override the rendering of the options item. |
-| onRenderInput | No | `-` | `function` | Override the rendering of the input control. |
 | onRenderEmpty | No | `-` | `function` | Override the rendering of the menu containers empty contents message. |
+| onRenderInput | No | `-` | `function` | Override the rendering of the input control. |
+| onFocus | No | `-` | `function` | Callback that gets called when the input control receives focus. |
+| onBlur | No | `-` | `function` | Callback that gets called when the input control loses focus. |
 | className | No | `""` | `string` | Add classes to the rcsd-dropdown |
 | inputContainerClassName | No | `""` | `string` | Add classes to the rcsd-input |
 | inputClassName | No | `""` | `string` | Add classes to the input element |
 | menuClassName | No | `""` | `string` | Add classes to the menu |
 | itemsClassName | No | `""` | `string` | Add classes to the items container|
 | itemClassName | No | `""` | `string` | Add classes to the item |
-| src | No | `""` | `string` | The relative or absolute URL where the data files are hosted |
+| title | No | `""` | `string` | The title to use for the input control |
+| width | No | `-` | `number` | Set the width of the control |
+| tabIndex | No | `-` | `number` | TabIndex of the control |
+| formatter | No | `-` | `function` | Called when formatting the selected value (if an object). Used primarily by dependent controls. |
 ---
 
 ```<CountryDropdown />```
 
 | Parameter | Required? | Default | Type | Description |
-|:---|:---:|:---|:---|:---|
+|:---|:---|:---|:---|:---|
 | placeHolder | No | `"Choose a country"` | `string` | Message displayed on the input/dropdown control when no input is selected. |
 | priority | No | `['US', 'CA', 'MX']` | `array` | An array of ISO2 country codes (ex. 'US') to show at the top of the list. |
 | removePrioritized | No | `false` | `boolean` | True to remove prioritized countries from the main list when searching. | 
@@ -113,8 +120,7 @@ These attributes are common to all dropdowns. Rendering of the component is cont
 ```<StateDropdown />```
 
 | Parameter | Required? | Default | Type | Description |
-|:---|:---:|:---|:---|:---|
-| country | Yes | `""` | `string/id/object` | The country using a country object, name or ISO2 country code.
+|:---|:---|:---|:---|:---|
 | placeHolder | No | `"Choose a state/province"` | `string` | Message displayed on the input/dropdown control when no input is selected. |
 | emptyLabel | No | `"No states available to select."` | `string` | Label to display when no items are available. |
 | noCountryLabel | No | `"Please select a country"` | `string` | Label to display when no country is selected. |
@@ -127,9 +133,9 @@ These attributes are common to all dropdowns. Rendering of the component is cont
 ```<CityDropdown />```
 
 | Parameter | Required? | Default | Type | Description |
-|:---|:---:|:---|:---|:---|
-| country | Yes | `""` | `string/id/object` | The country using a country object, name or ISO2 country code.
-| state | Yes | `""` | `string/id/object` | The state using a state object, name or state code.
+|:---|:---|:---|:---|:---|
+| country | Yes | `""` | `string/id/object` | The country using a country object, name or ISO2 country code. |
+| state | Yes | `""` | `string/id/object` | The state using a state object, name or state code. |
 | placeHolder | No | `"Choose a city"` | `string` | Message displayed on the input/dropdown control when no input is selected. |
 | emptyLabel | No | `"No cities available to select."` | `string` | Label to display when no items are available. |
 | noCountryLabel | No | `"Please select a country"` | `string` | Label to display when no country is selected. |
@@ -143,7 +149,7 @@ These attributes are common to all dropdowns. Rendering of the component is cont
 ```<LanguageDropdown />```
 
 | Parameter | Required? | Default | Type | Description |
-|:---|:---:|:---|:---|:---|
+|:---|:---|:---|:---|:---|
 | placeHolder | No | `"Choose a language"` | `string` | Message displayed on the input/dropdown control when no input is selected. |
 | emptyLabel | No | `"No items."` | `string` | Label to display when no items are available. |
 | priority | No | `['en']` | `array` | An array of ISO2 language codes (ex. 'en') to show at the top of the list. |
@@ -157,13 +163,15 @@ These attributes are common to all dropdowns. Rendering of the component is cont
 ```<PhoneInput />```
 
 | Parameter | Required? | Default | Type | Description |
-|:---|:---:|:---|:---|:---|
-| value | No | `""` | `string` | The currently selected value.
+|:---|:---|:---|:---|:---|
+| value | No | `""` | `string` | The currently selected value. |
 | name | No | `""` | `string` | The name attribute of the generated select box. |
+| country | Yes | `""` | `string/id/object` | The country using a country object, name or ISO2 country code. |
 | id | No | `""` | `string` | The ID of the generated select box. Not added by default. |
 | classes | No | `""` | `string` | Any additional space-separated classes you want to add. |
 | placeHolder | No | `"Enter a phone number"` | `string` | Message displayed on the input/dropdown control when no input is selected. |
 | priority | No | `['US','CA','MX']` | `array` | An array of ISO2 country codes (ex. 'US') to show at the top of the list. |
+| removePrioritized | No | `false` | `boolean` | True to remove prioritized countries from the main list when searching. | 
 | clearable | No | `false` | `boolean` | True to show an [X] button to clear the selected value. | 
 | disabled | No | `false` | `boolean` | Disables the control. |
 | onChange | No | `-` | `function` | Callback that gets called when the user selects a value. |
